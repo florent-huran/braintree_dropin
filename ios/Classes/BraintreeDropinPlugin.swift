@@ -3,25 +3,14 @@ import UIKit
 import BraintreeDropIn
 import Braintree
 
-var viewController: UIViewController
-
 public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
-    var _viewController: UIViewController
+    var viewController: UIViewController
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "braintree_dropin", binaryMessenger: registrar.messenger())
         viewController = UIApplication.shared.keyWindow!.rootViewController!
-        let instance = SwiftBraintreeDropinPlugin.initWithViewController(viewController: viewController)
+        let instance = SwiftBraintreeDropinPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
-    }
-    
-    public func initWithViewController(viewController: UIViewController) {
-        self = super.init();
-        
-        if (self) {
-            _viewController = viewController;
-        }
-        
-        return self;
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -84,7 +73,7 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
             }
             controller.dismiss(animated: true, completion: nil)
         }
-        self.present(dropIn!, animated: true, completion: nil)
+        viewController.present(dropIn!, animated: true, completion: nil)
     }
     
     

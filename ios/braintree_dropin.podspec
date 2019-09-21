@@ -10,11 +10,12 @@ Braintree dropin full implementation for iOS and Android
                        DESC
   s.homepage         = 'https://mysterytea.fr'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'florent@mysterytea.fr' }
+  s.author           = { 'MysteryTea' => 'florent@mysterytea.fr' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.dependency 'BraintreeDropIn'
+  s.dependency 'Braintree/PayPal'
   s.dependency 'Braintree/Apple-Pay'
 
   s.ios.deployment_target = '10.0'

@@ -36,34 +36,33 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
         request.threeDSecureVerification = true
         
         let threeDSecureRequest = BTThreeDSecureRequest()
-        threeDSecureRequest.threeDSecureRequestDelegate = self
-        
         threeDSecureRequest.amount = amount
         threeDSecureRequest.email = email
-        threeDSecureRequest.requested = .version2
+        threeDSecureRequest.versionRequested = .version2
         
         /*let address = BTThreeDSecurePostalAddress()
-         address.givenName = "Jill"
-         address.surname = "Doe"
-         address.phoneNumber = "5551234567"
-         address.streetAddress = "555 Smith St"
-         address.extendedAddress = "#2"
-         address.locality = "Chicago"
-         address.region = "IL"
-         address.postalCode = "12345"
-         address.countryCodeAlpha2 = "US"
-         threeDSecureRequest.billingAddress = address*/
+        address.givenName = "Jill" // ASCII-printable characters required, else will throw a validation error
+        address.surname = "Doe" // ASCII-printable characters required, else will throw a validation error
+        address.phoneNumber = "5551234567"
+        address.streetAddress = "555 Smith St"
+        address.extendedAddress = "#2"
+        address.locality = "Chicago"
+        address.region = "IL"
+        address.postalCode = "12345"
+        address.countryCodeAlpha2 = "US"
+        threeDSecureRequest.billingAddress = address
         
         // Optional additional information.
         // For best results, provide as many of these elements as possible.
-        /*let additionalInformation = BTThreeDSecureAdditionalInformation()
-         additionalInformation.shippingAddress = address
-         threeDSecureRequest.additionalInformation = additionalInformation*/
+        let info = BTThreeDSecureAdditionalInformation()
+        info.shippingAddress = address
+        threeDSecureRequest.additionalInformation = info*/
         
-        request.threeDSecureRequest = threeDSecureRequest
+        let dropInRequest = BTDropInRequest()
+        dropInRequest.threeDSecureVerification = true
+        dropInRequest.threeDSecureRequest = threeDSecureRequest
         
-        let dropIn = BTDropInController(authorization: clientTokenOrTokenizationKey, request: request)
-        { (controller, result, error) in
+        let dropIn = BTDropInController(authorization: self.authorizationString, request: dropInRequest) { (controller, result, error) in
             if (error != nil) {
                 FlutterResult("error")
             } else if (result?.isCancelled == true) {

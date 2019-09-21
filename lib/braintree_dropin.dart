@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/services.dart';
 
@@ -12,12 +13,14 @@ class BraintreeDropin {
     return version;
   }
 
-  Future showDropIn({String nonce = "",
-    String amount = "",
+  Future showDropIn({
+    @required String nonce,
+    @required String amount,
     bool enableGooglePay = false,
-    bool inSandbox = true,
-    String googleMerchantId = "",
-    String clientEmail = ""}) async {
+    bool inSandbox = false,
+    @required String googleMerchantId,
+    @required String clientEmail,
+    @required String merchantName}) async {
 
     if (Platform.isAndroid) {
       var result;
@@ -35,7 +38,8 @@ class BraintreeDropin {
           'enableGooglePay': enableGooglePay,
           'inSandbox': inSandbox,
           'googleMerchantId': googleMerchantId,
-          'email': clientEmail
+          'email': clientEmail,
+          "merchantName": merchantName
         });
       } else if (inSandbox) {
         result = await _channel.invokeMethod<Map>('showDropIn', {
@@ -44,13 +48,14 @@ class BraintreeDropin {
           'inSandbox': inSandbox,
           'enableGooglePay': enableGooglePay,
           'googleMerchantId': googleMerchantId,
-          'email': clientEmail
+          'email': clientEmail,
+          "merchantName": merchantName
         });
       }
       return result;
     } else {
       String result = await _channel
-          .invokeMethod('showDropIn', {'clientToken': nonce, 'amount': amount, 'clientEmail': clientEmail});
+          .invokeMethod('showDropIn', {'clientToken': nonce, 'amount': amount, 'clientEmail': clientEmail, "merchantName": merchantName});
       return result;
     }
 

@@ -8,6 +8,7 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
     
     var clientToken: String?
     var _flutterResult: FlutterResult?
+    var merchantName: String?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "braintree_dropin", binaryMessenger: registrar.messenger())
@@ -22,12 +23,14 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
             let _token = arguments?["clientToken"] as? String
             let _amount = arguments?["amount"] as? String
             let _email = arguments?["clientEmail"] as? String
-            guard let token = _token, let amount = _amount, let email = _email else {
+            let _merchantName = arguments?["merchantName"] as? String
+            guard let token = _token, let amount = _amount, let email = _email, let merchantName = _merchantName else {
                 result(nil)
                 return
             }
             _flutterResult = result;
             clientToken = token
+            self.merchantName = merchantName
             showDropIn(clientTokenOrTokenizationKey: token, amount: amount, email: email, withResult: result)
         } else {
             result(FlutterMethodNotImplemented);
@@ -127,6 +130,7 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
                 
                 paymentRequest.merchantCapabilities = PKMerchantCapability.capability3DS
                 paymentRequest.paymentSummaryItems = [PKPaymentSummaryItem(label: "MysteryTea", amount: NSDecimalNumber(string: amount))]
+                completion(paymentRequest, nil)
             }
         }
     }

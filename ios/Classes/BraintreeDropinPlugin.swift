@@ -62,7 +62,7 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
         dropInRequest.threeDSecureVerification = true
         dropInRequest.threeDSecureRequest = threeDSecureRequest
         
-        let dropIn = BTDropInController(authorization: self.authorizationString, request: dropInRequest) { (controller, result, error) in
+        let dropIn = BTDropInController(authorization: clientTokenOrTokenizationKey, request: dropInRequest) { (controller, result, error) in
             if (error != nil) {
                 FlutterResult("error")
             } else if (result?.isCancelled == true) {

@@ -2,8 +2,12 @@ import Flutter
 import UIKit
 import BraintreeDropIn
 import Braintree
+import PassKit
 
-public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
+public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAuthorizationViewControllerDelegate {
+    
+    var clientToken: String?
+    var _flutterResult: FlutterResult?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "braintree_dropin", binaryMessenger: registrar.messenger())
@@ -22,6 +26,8 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
                 result(nil)
                 return
             }
+            _flutterResult = result;
+            clientToken = token
             showDropIn(clientTokenOrTokenizationKey: token, amount: amount, email: email, withResult: result)
         } else {
             result(FlutterMethodNotImplemented);
@@ -55,6 +61,8 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
          info.shippingAddress = address
          threeDSecureRequest.additionalInformation = info*/
         
+        // TODO handle gestion of additionnal informations in order to improve 3D secure
+        
         let dropInRequest = BTDropInRequest()
         dropInRequest.threeDSecureVerification = true
         dropInRequest.threeDSecureRequest = threeDSecureRequest
@@ -64,6 +72,18 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
                 flutterResult("error")
             } else if (result?.isCancelled == true) {
                 flutterResult("cancelled")
+            } else if result?.paymentOptionType == .applePay {
+                self.setupPaymentRequest(amount: amount, clientToken: clientTokenOrTokenizationKey, completion: { (paymentRequest, error) in
+                    if let error = error {
+                        flutterResult(error)
+                    } else if let paymentRequest = paymentRequest {
+                        let vc = PKPaymentAuthorizationViewController(paymentRequest: paymentRequest)!
+                        vc.delegate = self
+                        UIApplication.shared.keyWindow!.rootViewController!.present(vc, animated: true, completion: nil)
+                    } else {
+                        flutterResult("error")
+                    }
+                })
             } else if let result = result {
                 flutterResult(result.paymentMethod!.nonce);
             }
@@ -72,5 +92,47 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
         UIApplication.shared.keyWindow!.rootViewController!.present(dropIn!, animated: true, completion: nil)
     }
     
+    public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
+        let braintreeClient = BTAPIClient(authorization: clientToken!)
+        
+        let applePayClient = BTApplePayClient(apiClient: braintreeClient!)
+        
+        applePayClient.tokenizeApplePay(payment) { (tokenizedApplePayPayment, error) in
+            if let tokenizedApplePayPayment = tokenizedApplePayPayment {
+                self._flutterResult!(tokenizedApplePayPayment.nonce);
+                completion(PKPaymentAuthorizationStatus.success);
+            } else {
+                // TODO check "error" to know why it failed
+                self._flutterResult!("error")
+                completion(PKPaymentAuthorizationStatus.failure);
+            }
+        }
+    }
     
+    func setupPaymentRequest(amount: String, clientToken: String, completion: @escaping ((PKPaymentRequest?, Error?) -> ())) {
+        let braintreeClient = BTAPIClient(authorization: clientToken)
+        
+        let applePayClient = BTApplePayClient(apiClient: braintreeClient!)
+        
+        applePayClient.paymentRequest { (paymentRequest, error) in
+            if let error = error {
+                completion(nil, error)
+            } else if let paymentRequest = paymentRequest {
+                // TODO get billing information
+                // We recommend collecting billing address information, at minimum
+                // billing postal code, and passing that billing postal code with all
+                // Apple Pay transactions as a best practice.
+                
+                //paymentRequest.requiredBillingContactFields = [NSSet setWithObject:PKContactFieldPostalAddress];
+                
+                paymentRequest.merchantCapabilities = PKMerchantCapability.capability3DS
+                paymentRequest.paymentSummaryItems = [PKPaymentSummaryItem(label: "MysteryTea", amount: NSDecimalNumber(string: amount))]
+            }
+        }
+    }
+    
+    public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
+        UIApplication.shared.keyWindow!.rootViewController!.dismiss(animated: true, completion: nil)
+    }
+
 }

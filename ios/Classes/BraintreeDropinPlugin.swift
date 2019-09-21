@@ -29,11 +29,12 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
         //result("iOS " + UIDevice.current.systemVersion)
         if call.method == "showDropIn" {
             let arguments = call.arguments as? NSDictionary
-            let token = arguments?["token"] as? String
-            let amount = arguments?["amount"] as? Double
-            let email = arguments?["email"] as? String
-            guard let token = token, let amount = amount, let email = email else {
-                result(nil) return
+            let _token = arguments?["token"] as? String
+            let _amount = arguments?["amount"] as? Double
+            let _email = arguments?["email"] as? String
+            guard let token = _token, let amount = _amount, let email = _email else {
+                result(nil)
+                return
             }
             showDropIn(clientTokenOrTokenizationKey: token, amount: amount, email: email, withResult: result)
             result(nil)

@@ -14,8 +14,8 @@ Braintree dropin full implementation for iOS and Android
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency = 'BraintreeDropIn'
-  s.dependency = 'Braintree/Apple-Pay'
+  s.dependency 'BraintreeDropIn'
+  s.dependency 'Braintree/Apple-Pay'
 
   s.ios.deployment_target = '10.0'
 end

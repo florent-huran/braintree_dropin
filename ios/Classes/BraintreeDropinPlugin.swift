@@ -4,7 +4,6 @@ import BraintreeDropIn
 import Braintree
 
 var viewController: UIViewController
-var FlutterResult _flutterResult;
 
 public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
     var _viewController: UIViewController

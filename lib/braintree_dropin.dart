@@ -1,27 +1,24 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 
 import 'package:flutter/services.dart';
 
 class BraintreeDropin {
-  static const MethodChannel _channel =
-      const MethodChannel('braintree_dropin');
+  static const MethodChannel _channel = const MethodChannel('braintree_dropin');
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
 
-  Future showDropIn({
-    @required String nonce,
-    @required String amount,
-    bool enableGooglePay = false,
-    bool inSandbox = false,
-    @required String googleMerchantId,
-    @required String clientEmail,
-    @required String merchantName}) async {
-
+  Future showDropIn(
+      {String nonce = "",
+      String amount = "",
+      bool enableGooglePay = false,
+      bool inSandbox = true,
+      String googleMerchantId = "",
+      String clientEmail = "",
+      String merchantName = ""}) async {
     if (Platform.isAndroid) {
       var result;
       if (inSandbox == false && googleMerchantId.isEmpty) {
@@ -54,10 +51,9 @@ class BraintreeDropin {
       }
       return result;
     } else {
-      String result = await _channel
-          .invokeMethod('showDropIn', {'clientToken': nonce, 'amount': amount, 'clientEmail': clientEmail, "merchantName": merchantName});
+      String result = await _channel.invokeMethod('showDropIn',
+          {'clientToken': nonce, 'amount': amount, 'clientEmail': clientEmail, "merchantName": merchantName});
       return result;
     }
-
   }
 }

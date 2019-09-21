@@ -95,23 +95,6 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
         UIApplication.shared.keyWindow!.rootViewController!.present(dropIn!, animated: true, completion: nil)
     }
     
-    public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
-        let braintreeClient = BTAPIClient(authorization: clientToken!)
-        
-        let applePayClient = BTApplePayClient(apiClient: braintreeClient!)
-        
-        applePayClient.tokenizeApplePay(payment) { (tokenizedApplePayPayment, error) in
-            if let tokenizedApplePayPayment = tokenizedApplePayPayment {
-                self._flutterResult!(tokenizedApplePayPayment.nonce);
-                completion(PKPaymentAuthorizationStatus.success);
-            } else {
-                // TODO check "error" to know why it failed
-                self._flutterResult!("error")
-                completion(PKPaymentAuthorizationStatus.failure);
-            }
-        }
-    }
-    
     func setupPaymentRequest(amount: String, clientToken: String, completion: @escaping ((PKPaymentRequest?, Error?) -> ())) {
         let braintreeClient = BTAPIClient(authorization: clientToken)
         
@@ -136,7 +119,24 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
     }
     
     public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        UIApplication.shared.keyWindow!.rootViewController!.dismiss(animated: true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
+        let braintreeClient = BTAPIClient(authorization: clientToken!)
+        
+        let applePayClient = BTApplePayClient(apiClient: braintreeClient!)
+        
+        applePayClient.tokenizeApplePay(payment) { (tokenizedApplePayPayment, error) in
+            if let tokenizedApplePayPayment = tokenizedApplePayPayment {
+                self._flutterResult!(tokenizedApplePayPayment.nonce);
+                completion(PKPaymentAuthorizationStatus.success);
+            } else {
+                // TODO check "error" to know why it failed
+                self._flutterResult!("error")
+                completion(PKPaymentAuthorizationStatus.failure);
+            }
+        }
     }
 
 }

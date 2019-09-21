@@ -41,7 +41,7 @@ PODS:
 
 DEPENDENCIES:
   - braintree_dropin (from `.symlinks/plugins/braintree_dropin/ios`)
-  - Flutter (from `.symlinks/flutter/ios-release`)
+  - Flutter (from `.symlinks/flutter/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -52,7 +52,7 @@ EXTERNAL SOURCES:
   braintree_dropin:
     :path: ".symlinks/plugins/braintree_dropin/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios-release"
+    :path: ".symlinks/flutter/ios"
 
 SPEC CHECKSUMS:
   Braintree: 15b731ae590ff54ba0ce25bcc42bd3c4829fd67e

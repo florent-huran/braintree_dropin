@@ -4,33 +4,25 @@ import BraintreeDropIn
 import Braintree
 
 public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
-    var viewController: UIViewController!
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "braintree_dropin", binaryMessenger: registrar.messenger())
-        let viewController = UIApplication.shared.keyWindow!.rootViewController!
-        let instance = SwiftBraintreeDropinPlugin(viewController)
+        let instance = SwiftBraintreeDropinPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
-    }
-    
-    init(_ viewController: UIViewController) {
-        super.init()
-        self.viewController = viewController
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         //result("iOS " + UIDevice.current.systemVersion)
         if call.method == "showDropIn" {
             let arguments = call.arguments as? NSDictionary
-            let _token = arguments?["token"] as? String
+            let _token = arguments?["clientToken"] as? String
             let _amount = arguments?["amount"] as? String
-            let _email = arguments?["email"] as? String
+            let _email = arguments?["clientEmail"] as? String
             guard let token = _token, let amount = _amount, let email = _email else {
                 result(nil)
                 return
             }
             showDropIn(clientTokenOrTokenizationKey: token, amount: amount, email: email, withResult: result)
-            result(nil)
         } else {
             result(FlutterMethodNotImplemented);
         }
@@ -77,7 +69,7 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin {
             }
             controller.dismiss(animated: true, completion: nil)
         }
-        viewController.present(dropIn!, animated: true, completion: nil)
+        UIApplication.shared.keyWindow!.rootViewController!.present(dropIn!, animated: true, completion: nil)
     }
     
     

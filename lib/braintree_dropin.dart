@@ -34,7 +34,8 @@ class BraintreeDropin {
           'amount': amount,
           'enableGooglePay': enableGooglePay,
           'inSandbox': inSandbox,
-          'googleMerchantId': googleMerchantId
+          'googleMerchantId': googleMerchantId,
+          'email': clientEmail
         });
       } else if (inSandbox) {
         result = await _channel.invokeMethod<Map>('showDropIn', {
@@ -42,7 +43,8 @@ class BraintreeDropin {
           'amount': amount,
           'inSandbox': inSandbox,
           'enableGooglePay': enableGooglePay,
-          'googleMerchantId': googleMerchantId
+          'googleMerchantId': googleMerchantId,
+          'email': clientEmail
         });
       }
       return result;

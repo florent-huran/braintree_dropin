@@ -18,7 +18,8 @@ class BraintreeDropin {
       bool inSandbox = true,
       String googleMerchantId = "",
       String clientEmail = "",
-      String merchantName = ""}) async {
+      String merchantName = "",
+      String currencyCode = "EUR"}) async {
     if (Platform.isAndroid) {
       var result;
       if (inSandbox == false && googleMerchantId.isEmpty) {
@@ -36,7 +37,8 @@ class BraintreeDropin {
           'inSandbox': inSandbox,
           'googleMerchantId': googleMerchantId,
           'email': clientEmail,
-          "merchantName": merchantName
+          "merchantName": merchantName,
+          "currencyCode": currencyCode
         });
       } else if (inSandbox) {
         result = await _channel.invokeMethod<Map>('showDropIn', {
@@ -46,7 +48,8 @@ class BraintreeDropin {
           'enableGooglePay': enableGooglePay,
           'googleMerchantId': googleMerchantId,
           'email': clientEmail,
-          "merchantName": merchantName
+          "merchantName": merchantName,
+          "currencyCode": currencyCode
         });
       }
       return result;

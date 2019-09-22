@@ -60,7 +60,7 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
             this.enableGooglePay = call.argument("enableGooglePay");
             this.clientEmail = call.argument("clientEmail");
             this.merchantName = call.argument("merchantName");
-            this.currencyCode = call.argument("currenyCode");
+            this.currencyCode = call.argument("currencyCode");
             payNow();
         } else {
             result.notImplemented();

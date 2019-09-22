@@ -67,6 +67,7 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
             }
         }
         
+        
         if let overlayColorHex = appearance["overlayColorHex"] as? String {
             let overlayColor = UIColor.init(hexString: overlayColorHex)
             BTUIKAppearance().overlayColor = overlayColor

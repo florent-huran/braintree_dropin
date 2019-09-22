@@ -21,7 +21,7 @@ class BraintreeDropin {
       String clientEmail = "",
       String merchantName = "",
       String currencyCode = "EUR",
-      BraintreeDropinAppearance appearance}) async {
+      /*BraintreeDropinAppearance appearance*/}) async {
     if (Platform.isAndroid) {
       var result;
       if (inSandbox == false && googleMerchantId.isEmpty) {
@@ -61,7 +61,7 @@ class BraintreeDropin {
         'amount': amount,
         'clientEmail': clientEmail,
         "merchantName": merchantName,
-        "appearance": appearance.toJSON()
+        "appearance": /*appearance.toJSON()*/
       });
       return result;
     }

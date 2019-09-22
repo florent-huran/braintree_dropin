@@ -16,6 +16,8 @@ import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.models.GooglePaymentRequest;
 
+import com.braintreepayments.api.models.ThreeDSecureAdditionalInformation;
+import com.braintreepayments.api.models.ThreeDSecureRequest;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.WalletConstants;
 
@@ -34,6 +36,7 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
     String clientEmail = "";
     String merchantName = "";
     String currencyCode = "EUR";
+    HashMap<String, String> map = new HashMap<String, String>();
 
     public BraintreeDropinPlugin(Registrar registrar) {
         activity = registrar.activity();
@@ -57,7 +60,7 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
             this.enableGooglePay = call.argument("enableGooglePay");
             this.clientEmail = call.argument("clientEmail");
             this.merchantName = call.argument("merchantName");
-            this.currencyCode = call.argument("currencyCode");
+            this.currencyCode = call.argument("currenyCode");
             payNow();
         } else {
             result.notImplemented();
@@ -65,7 +68,33 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
     }
 
     void payNow(){
-        DropInRequest dropInRequest = new DropInRequest().clientToken(clientToken);
+        /*ThreeDSecurePostalAddress address = new ThreeDSecurePostalAddress()
+                .givenName("Jill") // ASCII-printable characters required, else will throw a validation error
+                .surname("Doe") // ASCII-printable characters required, else will throw a validation error
+                .phoneNumber("5551234567")
+                .streetAddress("555 Smith St")
+                .extendedAddress("#2")
+                .locality("Chicago")
+                .region("IL")
+                .postalCode("12345")
+                .countryCodeAlpha2("US");*/
+
+        // For best results, provide as many additional elements as possible.
+        ThreeDSecureAdditionalInformation additionalInformation = new ThreeDSecureAdditionalInformation()
+                .deliveryEmail(clientEmail);
+        //.shippingAddress(address);
+
+        ThreeDSecureRequest threeDSecureRequest = new ThreeDSecureRequest()
+                .amount(amount)
+                .email(clientEmail)
+                //.billingAddress(address)
+                .versionRequested(ThreeDSecureRequest.VERSION_2)
+                .additionalInformation(additionalInformation);
+
+        DropInRequest dropInRequest = new DropInRequest()
+                .clientToken(clientToken)
+                .requestThreeDSecureVerification(true)
+                .threeDSecureRequest(threeDSecureRequest);
         if(enableGooglePay){
             enableGooglePay(dropInRequest);
         }
@@ -105,15 +134,25 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
                     DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
                     String paymentNonce = result.getPaymentMethodNonce().getNonce();
                     if(paymentNonce == null && paymentNonce.isEmpty()){
-                        activeResult.success("error");
+                        map.put("status", "fail");
+                        map.put("message", "Payment Nonce is Empty.");
+                        activeResult.success(map);
                     }
                     else{
-                        activeResult.success(paymentNonce);
+                        map.put("status", "success");
+                        map.put("message", "Payment Nouce is ready.");
+                        map.put("paymentNonce", paymentNonce);
+                        activeResult.success(map);
                     }
                 } else if (resultCode == Activity.RESULT_CANCELED) {
-                    activeResult.success("cancelled");
+                    map.put("status", "fail");
+                    map.put("message", "User canceled the Payment");
+                    activeResult.success(map);
                 } else {
-                    activeResult.success("error");
+                    Exception error = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
+                    map.put("status", "fail");
+                    map.put("message", error.getMessage());
+                    activeResult.success(map);
                 }
                 return true;
             default:

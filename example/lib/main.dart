@@ -27,7 +27,12 @@ class _PayState extends State<Pay> {
   payNow() async {
     BraintreeDropin braintreePayment = new BraintreeDropin();
     var data = await braintreePayment.showDropIn(
-        nonce: clientNonce, amount: "2.0", enableGooglePay: false, clientEmail: "test@gmail.com", googleMerchantId: null, merchantName: "MysteryTea");
+        nonce: clientNonce,
+        amount: "2.0",
+        enableGooglePay: true,
+        clientEmail: "test@gmail.com",
+        googleMerchantId: "118692457",
+        merchantName: "MysteryTea");
     print("Response of the payment $data");
   }
 

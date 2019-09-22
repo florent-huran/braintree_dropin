@@ -134,24 +134,15 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
                     DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
                     String paymentNonce = result.getPaymentMethodNonce().getNonce();
                     if(paymentNonce == null && paymentNonce.isEmpty()){
-                        map.put("status", "fail");
-                        map.put("message", "Payment Nonce is Empty.");
                         activeResult.success("error");
                     }
                     else{
-                        map.put("status", "success");
-                        map.put("message", "Payment Nouce is ready.");
-                        map.put("paymentNonce", paymentNonce);
                         activeResult.success(paymentNonce);
                     }
                 } else if (resultCode == Activity.RESULT_CANCELED) {
-                    map.put("status", "fail");
-                    map.put("message", "User canceled the Payment");
                     activeResult.success("cancelled");
                 } else {
                     Exception error = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
-                    map.put("status", "fail");
-                    map.put("message", error.getMessage());
                     activeResult.success("error");
                 }
                 return true;

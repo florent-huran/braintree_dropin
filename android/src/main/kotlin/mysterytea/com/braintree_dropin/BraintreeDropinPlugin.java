@@ -36,6 +36,7 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
     String clientEmail = "";
     String merchantName = "";
     String currencyCode = "EUR";
+    boolean useVaultManager = false;
     HashMap<String, String> map = new HashMap<String, String>();
 
     public BraintreeDropinPlugin(Registrar registrar) {
@@ -61,6 +62,7 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
             this.clientEmail = call.argument("clientEmail");
             this.merchantName = call.argument("merchantName");
             this.currencyCode = call.argument("currencyCode");
+            this.useVaultManager = call.argument("vaultManager");
             payNow();
         } else {
             result.notImplemented();
@@ -94,6 +96,7 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
         DropInRequest dropInRequest = new DropInRequest()
                 .clientToken(clientToken)
                 .requestThreeDSecureVerification(true)
+                .vaultManager(useVaultManager)
                 .threeDSecureRequest(threeDSecureRequest);
         if(enableGooglePay){
             enableGooglePay(dropInRequest);

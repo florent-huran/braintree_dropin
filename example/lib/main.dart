@@ -32,7 +32,8 @@ class _PayState extends State<Pay> {
         enableGooglePay: true,
         clientEmail: "test@gmail.com",
         googleMerchantId: "118692457",
-        merchantName: "MysteryTea");
+        merchantName: "MysteryTea",
+    useVaultManager: true);
     print("Response of the payment $data");
   }
 

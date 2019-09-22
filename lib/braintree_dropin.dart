@@ -12,16 +12,17 @@ class BraintreeDropin {
     return version;
   }
 
-  Future<String> showDropIn(
-      {String nonce = "",
-      String amount = "",
-      bool enableGooglePay = false,
-      bool inSandbox = true,
-      String googleMerchantId = "",
-      String clientEmail = "",
-      String merchantName = "",
-      String currencyCode = "EUR",
-      /*BraintreeDropinAppearance appearance*/}) async {
+  Future<String> showDropIn({String nonce = "",
+    String amount = "",
+    bool enableGooglePay = false,
+    bool inSandbox = true,
+    String googleMerchantId = "",
+    String clientEmail = "",
+    String merchantName = "",
+    String currencyCode = "EUR",
+    bool useVaultManager = false,
+    /*BraintreeDropinAppearance appearance*/
+  }) async {
     if (Platform.isAndroid) {
       var result;
       if (inSandbox == false && googleMerchantId.isEmpty) {
@@ -40,7 +41,8 @@ class BraintreeDropin {
           'googleMerchantId': googleMerchantId,
           'email': clientEmail,
           "merchantName": merchantName,
-          "currencyCode": currencyCode
+          "currencyCode": currencyCode,
+          "vaultManager": useVaultManager
         });
       } else if (inSandbox) {
         result = await _channel.invokeMethod('showDropIn', {
@@ -51,7 +53,8 @@ class BraintreeDropin {
           'googleMerchantId': googleMerchantId,
           'email': clientEmail,
           "merchantName": merchantName,
-          "currencyCode": currencyCode
+          "currencyCode": currencyCode,
+          "vaultManager": useVaultManager
         });
       }
       return result;
@@ -61,7 +64,8 @@ class BraintreeDropin {
         'amount': amount,
         'clientEmail': clientEmail,
         "merchantName": merchantName,
-        "appearance": /*appearance.toJSON()*/
+        /*"appearance": appearance.toJSON()*/
+        "vaultManager": useVaultManager
       });
       return result;
     }
@@ -144,30 +148,30 @@ class BraintreeDropinAppearance {
   String switchThumbTintColorHex;
 
   BraintreeDropinAppearance({
-      this.isDarkTheme,
-      this.useSystemTheme,
-      this.overlayColorHex,
-      this.tintColorHex,
-      this.barBackgroundColorHex,
-      //this.fontFamily,
-      //this.boldFontFamily,
-      this.formBackgroundColorHex,
-      this.formFieldBackgroundColorHex,
-      this.primaryTextColorHex,
-      this.navigationBarTitleTextColorHex,
-      this.secondaryTextColorHex,
-      this.disabledColorHex,
-      this.placeholderTextColorHex,
-      this.lineColorHex,
-      this.errorForegroundColorHex,
-      this.blurStyleRawValue,
-      this.activityIndicatorViewStyleRawValue,
-      this.useBlurs,
-      this.switchOnTintColorHex,
-      this.switchThumbTintColorHex});
+    this.isDarkTheme,
+    this.useSystemTheme,
+    this.overlayColorHex,
+    this.tintColorHex,
+    this.barBackgroundColorHex,
+    //this.fontFamily,
+    //this.boldFontFamily,
+    this.formBackgroundColorHex,
+    this.formFieldBackgroundColorHex,
+    this.primaryTextColorHex,
+    this.navigationBarTitleTextColorHex,
+    this.secondaryTextColorHex,
+    this.disabledColorHex,
+    this.placeholderTextColorHex,
+    this.lineColorHex,
+    this.errorForegroundColorHex,
+    this.blurStyleRawValue,
+    this.activityIndicatorViewStyleRawValue,
+    this.useBlurs,
+    this.switchOnTintColorHex,
+    this.switchThumbTintColorHex});
 
   Map<String, dynamic> toJSON() {
-    Map<String, dynamic> results =  {
+    Map<String, dynamic> results = {
       "isDarkTheme": this.isDarkTheme,
       "useSystemTheme": this.useSystemTheme,
       "overlayColorHex": this.overlayColorHex,
@@ -185,7 +189,8 @@ class BraintreeDropinAppearance {
       "lineColorHex": this.lineColorHex,
       "errorForegroundColorHex": this.errorForegroundColorHex,
       "blurStyleRawValue": this.blurStyleRawValue,
-      "activityIndicatorViewStyleRawValue": this.activityIndicatorViewStyleRawValue,
+      "activityIndicatorViewStyleRawValue": this
+          .activityIndicatorViewStyleRawValue,
       "useBlurs": this.useBlurs,
       "switchOnTintColorHex": this.switchOnTintColorHex,
       "switchThumbTintColorHex": this.switchThumbTintColorHex,

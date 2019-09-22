@@ -24,7 +24,8 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
             let _amount = arguments?["amount"] as? String
             let _email = arguments?["clientEmail"] as? String
             let _merchantName = arguments?["merchantName"] as? String
-            guard let token = _token, let amount = _amount, let email = _email, let merchantName = _merchantName else {
+            let _useVaultManager = arguments?["vaultManager"] as? Bool
+            guard let token = _token, let amount = _amount, let email = _email, let merchantName = _merchantName, let useVaultManager = _useVaultManager else {
                 result(nil)
                 return
             }
@@ -34,7 +35,7 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
             _flutterResult = result;
             clientToken = token
             self.merchantName = merchantName
-            showDropIn(clientTokenOrTokenizationKey: token, amount: amount, email: email, withResult: result)
+            showDropIn(clientTokenOrTokenizationKey: token, amount: amount, email: email, useVaultManager: useVaultManager, withResult: result)
         } else {
             result(FlutterMethodNotImplemented);
         }
@@ -162,9 +163,10 @@ public class SwiftBraintreeDropinPlugin: NSObject, FlutterPlugin, PKPaymentAutho
         }
     }
     
-    func showDropIn(clientTokenOrTokenizationKey: String, amount: String, email: String, withResult flutterResult: @escaping FlutterResult) {
+    func showDropIn(clientTokenOrTokenizationKey: String, amount: String, email: String, useVaultManager: Bool, withResult flutterResult: @escaping FlutterResult) {
         let request = BTDropInRequest()
         request.threeDSecureVerification = true
+        request.vaultManager = useVaultManager
         
         let threeDSecureRequest = BTThreeDSecureRequest()
         threeDSecureRequest.amount = NSDecimalNumber(string: amount)

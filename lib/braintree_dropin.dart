@@ -30,7 +30,7 @@ class BraintreeDropin {
       } else if (amount.isEmpty) {
         print("ERROR BRAINTREE PAYMENT : Amount cannot be empty");
       } else if (inSandbox == false && googleMerchantId.isNotEmpty) {
-        result = await _channel.invokeMethod<Map>('showDropIn', {
+        result = await _channel.invokeMethod('showDropIn', {
           'clientToken': nonce,
           'amount': amount,
           'enableGooglePay': enableGooglePay,
@@ -41,7 +41,7 @@ class BraintreeDropin {
           "currencyCode": currencyCode
         });
       } else if (inSandbox) {
-        result = await _channel.invokeMethod<Map>('showDropIn', {
+        result = await _channel.invokeMethod('showDropIn', {
           'clientToken': nonce,
           'amount': amount,
           'inSandbox': inSandbox,

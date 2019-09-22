@@ -34,7 +34,6 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
     String clientEmail = "";
     String merchantName = "";
     String currencyCode = "EUR";
-    HashMap<String, String> map = new HashMap<String, String>();
 
     public BraintreeDropinPlugin(Registrar registrar) {
         activity = registrar.activity();
@@ -106,25 +105,15 @@ public class BraintreeDropinPlugin implements MethodCallHandler, ActivityResultL
                     DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
                     String paymentNonce = result.getPaymentMethodNonce().getNonce();
                     if(paymentNonce == null && paymentNonce.isEmpty()){
-                        map.put("status", "fail");
-                        map.put("message", "Payment Nonce is Empty.");
-                        activeResult.success(map);
+                        activeResult.success("error");
                     }
                     else{
-                        map.put("status", "success");
-                        map.put("message", "Payment Nouce is ready.");
-                        map.put("paymentNonce", paymentNonce);
-                        activeResult.success(map);
+                        activeResult.success(paymentNonce);
                     }
                 } else if (resultCode == Activity.RESULT_CANCELED) {
-                    map.put("status", "fail");
-                    map.put("message", "User canceled the Payment");
-                    activeResult.success(map);
+                    activeResult.success("cancelled");
                 } else {
-                    Exception error = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
-                    map.put("status", "fail");
-                    map.put("message", error.getMessage());
-                    activeResult.success(map);
+                    activeResult.success("error");
                 }
                 return true;
             default:

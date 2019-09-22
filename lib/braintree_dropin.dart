@@ -11,7 +11,7 @@ class BraintreeDropin {
     return version;
   }
 
-  Future showDropIn(
+  Future<String> showDropIn(
       {String nonce = "",
       String amount = "",
       bool enableGooglePay = false,

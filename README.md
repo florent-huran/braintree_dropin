@@ -83,7 +83,7 @@ You'll have to edit your `AndroidManifest.xml` in order to prepare for Braintree
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="mysterytea.mysterytea.braintree" />
+                <data android:scheme="your.application.package.name.braintree" />
             </intent-filter>
         </activity>
 ```
@@ -162,7 +162,7 @@ void showPopin(String clientNonce, String clientEmail, String amount) async {
         enableGooglePay: true,
         inSandbox: true,
         clientEmail: clientEmail,
-        merchantName: "MysteryTea",
+        merchantName: "Your Merchant Name",
         googleMerchantId: null,
         useVaultManager: true);
 
